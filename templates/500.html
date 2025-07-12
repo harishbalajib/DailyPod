@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - DailyPod{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px;">
+    <div style="font-size: 6rem; margin-bottom: 20px;">😰</div>
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2.5rem;">Server Error</h2>
+    <p style="color: #34495e; font-size: 1.2rem; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+        Something went wrong on our end. Please try again later or contact support if the problem persists.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('index') }}" class="btn" style="font-size: 1.1rem; padding: 15px 30px;">
+            🏠 Go Home
+        </a>
+        <button onclick="location.reload()" class="btn btn-secondary" style="font-size: 1.1rem; padding: 15px 30px;">
+            🔄 Try Again
+        </button>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}DailyPod - Your Daily News Podcast{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2rem;">🎧 Get Your Daily News as a Podcast</h2>
+    <p style="font-size: 1.2rem; color: #34495e; margin-bottom: 30px; max-width: 800px; margin-left: auto; margin-right: auto;">
+        Stay informed with AI-powered news summaries delivered directly to your WhatsApp every morning at 7:30 AM. 
+        Perfect for busy professionals who want to stay updated while on the go.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+    <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div style="font-size: 3rem; margin-bottom: 15px;">🤖</div>
+        <h3 style="color: #27ae60; margin-bottom: 15px;">AI-Powered Summaries</h3>
+        <p style="color: #6c757d;">Our advanced AI creates concise, engaging summaries of the day's top US news stories, perfect for audio consumption.</p>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div style="font-size: 3rem; margin-bottom: 15px;">🎵</div>
+        <h3 style="color: #27ae60; margin-bottom: 15px;">High-Quality Audio</h3>
+        <p style="color: #6c757d;">Professional text-to-speech technology converts summaries into clear, natural-sounding audio files.</p>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+        <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
+        <h3 style="color: #27ae60; margin-bottom: 15px;">WhatsApp Delivery</h3>
+        <p style="color: #6c757d;">Receive your daily news podcast directly on WhatsApp, making it easy to listen during your commute or morning routine.</p>
+    </div>
+</div>
+
+<div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 30px; border-radius: 12px; margin-bottom: 40px; text-align: center;">
+    <h3 style="color: #27ae60; margin-bottom: 20px; font-size: 1.5rem;">🌍 Multi-Language Support</h3>
+    <p style="color: #2c3e50; margin-bottom: 25px; font-size: 1.1rem;">
+        Available in English, Spanish, French, German, and Portuguese. Choose your preferred language for the best experience.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #27ae60; font-weight: 600;">🇺🇸 English</span>
+        <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #27ae60; font-weight: 600;">🇪🇸 Spanish</span>
+        <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #27ae60; font-weight: 600;">🇫🇷 French</span>
+        <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #27ae60; font-weight: 600;">🇩🇪 German</span>
+        <span style="background: white; padding: 8px 16px; border-radius: 20px; color: #27ae60; font-weight: 600;">🇵🇹 Portuguese</span>
+    </div>
+</div>
+
+<div style="text-align: center; margin-bottom: 40px;">
+    <h3 style="color: #27ae60; margin-bottom: 20px; font-size: 1.5rem;">⏰ Daily Delivery Schedule</h3>
+    <div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="font-size: 2rem; color: #27ae60; margin-bottom: 10px;">🕖 7:30 AM</div>
+        <p style="color: #6c757d; margin: 0;">Every morning, US time zones</p>
+    </div>
+</div>
+
+<div style="text-align: center;">
+    <h3 style="color: #27ae60; margin-bottom: 20px; font-size: 1.5rem;">Ready to Get Started?</h3>
+    <p style="color: #34495e; margin-bottom: 30px; font-size: 1.1rem;">
+        Join thousands of users who start their day informed with DailyPod.
+    </p>
+    <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('subscribe') }}" class="btn" style="font-size: 1.1rem; padding: 15px 30px;">
+            📱 Subscribe Now
+        </a>
+        <a href="{{ url_for('unsubscribe') }}" class="btn btn-secondary" style="font-size: 1.1rem; padding: 15px 30px;">
+            🚫 Unsubscribe
+        </a>
+    </div>
+</div>
+
+<div style="margin-top: 50px; padding: 25px; background: rgba(255,255,255,0.8); border-radius: 12px; border-left: 4px solid #27ae60;">
+    <h4 style="color: #27ae60; margin-bottom: 15px;">💡 How It Works</h4>
+    <ol style="color: #2c3e50; line-height: 1.8; padding-left: 20px;">
+        <li><strong>Subscribe:</strong> Enter your phone number and choose your preferred language</li>
+        <li><strong>Receive Welcome:</strong> Get a welcome message on WhatsApp confirming your subscription</li>
+        <li><strong>Daily Delivery:</strong> Every morning at 7:30 AM, receive your personalized news summary as an audio file</li>
+        <li><strong>Stay Informed:</strong> Listen to the latest US news while commuting, exercising, or during your morning routine</li>
+    </ol>
+</div>
+{% endblock %} 

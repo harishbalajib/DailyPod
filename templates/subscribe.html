@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe - DailyPod{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2rem;">📱 Subscribe to DailyPod</h2>
+    <p style="color: #34495e; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">
+        Get your daily news summary delivered as a podcast to your WhatsApp every morning at 7:30 AM.
+    </p>
+</div>
+
+<div style="max-width: 500px; margin: 0 auto;">
+    <form method="POST" style="background: rgba(255,255,255,0.9); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <div class="form-group">
+            <label for="phone_number">📞 Phone Number</label>
+            <input type="tel" id="phone_number" name="phone_number" placeholder="e.g., 555-123-4567" required>
+            <small style="color: #6c757d; font-size: 0.9rem; display: block; margin-top: 5px;">
+                Enter your phone number with or without country code. We'll automatically add +1 for US numbers.
+            </small>
+        </div>
+        
+        <div class="form-group">
+            <label for="language">🌍 Preferred Language</label>
+            <select id="language" name="language" required>
+                <option value="en">🇺🇸 English</option>
+                <option value="es">🇪🇸 Spanish</option>
+                <option value="fr">🇫🇷 French</option>
+                <option value="de">🇩🇪 German</option>
+                <option value="pt">🇵🇹 Portuguese</option>
+            </select>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn" style="font-size: 1.1rem; padding: 15px 40px;">
+                🎉 Subscribe Now
+            </button>
+        </div>
+    </form>
+    
+    <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); border-radius: 10px; text-align: center;">
+        <h4 style="color: #27ae60; margin-bottom: 15px;">✨ What You'll Get</h4>
+        <ul style="color: #2c3e50; text-align: left; line-height: 1.8; padding-left: 20px;">
+            <li>Daily news summaries at 7:30 AM</li>
+            <li>AI-powered content curation</li>
+            <li>High-quality audio delivery</li>
+            <li>Multi-language support</li>
+            <li>Easy WhatsApp integration</li>
+        </ul>
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+        <p style="color: #6c757d; font-size: 0.9rem;">
+            Already subscribed? <a href="{{ url_for('unsubscribe') }}" style="color: #27ae60; text-decoration: none; font-weight: 600;">Unsubscribe here</a>
+        </p>
+    </div>
+</div>
+{% endblock %} 

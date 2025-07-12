@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Articles - DailyPod{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2rem;">📄 Manage Articles</h2>
+    <p style="color: #34495e; font-size: 1.1rem;">
+        View and manage news articles. Monitor AI-generated summaries and article processing status.
+    </p>
+</div>
+
+<div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: #27ae60;">📰 News Articles</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="languageFilter" onchange="filterByLanguage()" style="padding: 8px; border-radius: 6px; border: 1px solid #e0e0e0;">
+                <option value="all" {{ 'selected' if current_language == 'all' else '' }}>All Languages</option>
+                <option value="en" {{ 'selected' if current_language == 'en' else '' }}>🇺🇸 English</option>
+                <option value="es" {{ 'selected' if current_language == 'es' else '' }}>🇪🇸 Spanish</option>
+                <option value="fr" {{ 'selected' if current_language == 'fr' else '' }}>🇫🇷 French</option>
+                <option value="de" {{ 'selected' if current_language == 'de' else '' }}>🇩🇪 German</option>
+                <option value="pt" {{ 'selected' if current_language == 'pt' else '' }}>🇵🇹 Portuguese</option>
+            </select>
+            <span style="color: #6c757d;">
+                Showing {{ articles.items|length }} of {{ articles.total }} articles
+            </span>
+        </div>
+    </div>
+    
+    {% if articles.items %}
+        <div style="overflow-x: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Language</th>
+                        <th>Source</th>
+                        <th>Created</th>
+                        <th>Summary</th>
+                        <th>Audio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles.items %}
+                        <tr>
+                            <td style="max-width: 200px;">
+                                <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">
+                                    {{ article.title[:100] }}{% if article.title|length > 100 %}...{% endif %}
+                                </div>
+                                {% if article.url %}
+                                    <a href="{{ article.url }}" target="_blank" style="color: #27ae60; font-size: 0.8rem;">View Source</a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-success" style="text-transform: capitalize;">
+                                    {{ article.category }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if article.language == 'en' %}🇺🇸 English
+                                {% elif article.language == 'es' %}🇪🇸 Spanish
+                                {% elif article.language == 'fr' %}🇫🇷 French
+                                {% elif article.language == 'de' %}🇩🇪 German
+                                {% elif article.language == 'pt' %}🇵🇹 Portuguese
+                                {% else %}{{ article.language }}
+                                {% endif %}
+                            </td>
+                            <td>{{ article.source }}</td>
+                            <td>{{ article.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td style="max-width: 200px;">
+                                {% if article.summary %}
+                                    <div style="color: #2c3e50; font-size: 0.9rem;">
+                                        {{ article.summary[:150] }}{% if article.summary|length > 150 %}...{% endif %}
+                                    </div>
+                                {% else %}
+                                    <span style="color: #6c757d; font-style: italic;">No summary</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if article.audio_file %}
+                                    <span class="badge badge-success">✓ Generated</span>
+                                {% else %}
+                                    <span style="color: #6c757d;">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if articles.pages > 1 %}
+            <div style="text-align: center; margin-top: 30px;">
+                <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                    {% if articles.has_prev %}
+                        <a href="{{ url_for('admin_articles', page=articles.prev_num, language=current_language) }}" class="btn btn-secondary" style="padding: 8px 16px;">← Previous</a>
+                    {% endif %}
+                    
+                    <span style="color: #6c757d; font-weight: 600;">
+                        Page {{ articles.page }} of {{ articles.pages }}
+                    </span>
+                    
+                    {% if articles.has_next %}
+                        <a href="{{ url_for('admin_articles', page=articles.next_num, language=current_language) }}" class="btn btn-secondary" style="padding: 8px 16px;">Next →</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div style="text-align: center; padding: 40px;">
+            <p style="color: #6c757d; font-size: 1.1rem;">No articles found</p>
+        </div>
+    {% endif %}
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterByLanguage() {
+    const language = document.getElementById('languageFilter').value;
+    const currentUrl = new URL(window.location);
+    
+    if (language === 'all') {
+        currentUrl.searchParams.delete('language');
+    } else {
+        currentUrl.searchParams.set('language', language);
+    }
+    
+    currentUrl.searchParams.delete('page'); // Reset to first page
+    window.location.href = currentUrl.toString();
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - DailyPod{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2rem;">📊 Admin Dashboard</h2>
+    <p style="color: #34495e; font-size: 1.1rem;">
+        Welcome to the DailyPod administration panel. Monitor system performance and manage your news delivery service.
+    </p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>{{ total_users }}</h3>
+        <p>Total Users</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ active_users }}</h3>
+        <p>Active Subscribers</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ total_articles }}</h3>
+        <p>Total Articles</p>
+    </div>
+    <div class="stat-card">
+        <h3>{{ recent_articles }}</h3>
+        <p>Today's Articles</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+    <div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h3 style="color: #27ae60; margin-bottom: 20px;">🌍 Users by Language</h3>
+        {% if users_by_language %}
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                {% for language, count in users_by_language %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                        <span style="font-weight: 600; color: #2c3e50;">
+                            {% if language == 'en' %}🇺🇸 English
+                            {% elif language == 'es' %}🇪🇸 Spanish
+                            {% elif language == 'fr' %}🇫🇷 French
+                            {% elif language == 'de' %}🇩🇪 German
+                            {% elif language == 'pt' %}🇵🇹 Portuguese
+                            {% else %}{{ language }}
+                            {% endif %}
+                        </span>
+                        <span style="background: #27ae60; color: white; padding: 4px 12px; border-radius: 20px; font-weight: 600;">{{ count }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #6c757d; text-align: center;">No users found</p>
+        {% endif %}
+    </div>
+    
+    <div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h3 style="color: #27ae60; margin-bottom: 20px;">📝 Recent System Logs</h3>
+        {% if recent_logs %}
+            <div style="max-height: 300px; overflow-y: auto;">
+                {% for log in recent_logs %}
+                    <div style="padding: 10px; border-bottom: 1px solid #e0e0e0; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span class="badge badge-{{ 'success' if log.level == 'info' else 'danger' if log.level == 'error' else 'warning' }}">
+                                {{ log.level.upper() }}
+                            </span>
+                            <small style="color: #6c757d;">{{ log.timestamp.strftime('%H:%M:%S') }}</small>
+                        </div>
+                        <p style="color: #2c3e50; font-size: 0.9rem; margin: 0;">{{ log.message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: #6c757d; text-align: center;">No recent logs</p>
+        {% endif %}
+    </div>
+</div>
+
+<div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px;">
+    <h3 style="color: #27ae60; margin-bottom: 20px;">⚡ Quick Actions</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+        <button onclick="fetchNews()" class="btn" style="width: 100%;">
+            📰 Fetch Latest News
+        </button>
+        <button onclick="manualDelivery()" class="btn" style="width: 100%;">
+            📤 Manual Delivery
+        </button>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-secondary" style="width: 100%; text-align: center; text-decoration: none;">
+            👥 Manage Users
+        </a>
+        <a href="{{ url_for('admin_articles') }}" class="btn btn-secondary" style="width: 100%; text-align: center; text-decoration: none;">
+            📄 View Articles
+        </a>
+    </div>
+</div>
+
+<div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 25px; border-radius: 12px; text-align: center;">
+    <h3 style="color: #27ae60; margin-bottom: 15px;">⏰ Next Scheduled Delivery</h3>
+    <p style="color: #2c3e50; font-size: 1.2rem; font-weight: 600;">Tomorrow at 7:30 AM</p>
+    <p style="color: #6c757d; margin-top: 10px;">The system will automatically deliver news to all active subscribers</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function fetchNews() {
+    fetch('/api/fetch-news', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            language: 'en',
+            category: 'general'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Success: ' + data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+
+function manualDelivery() {
+    const language = prompt('Enter language code (en, es, fr, de, pt):', 'en');
+    if (language) {
+        fetch('/api/manual-delivery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                language: language
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Success: ' + data.message);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %} 

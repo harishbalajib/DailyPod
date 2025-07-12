@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - DailyPod{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-bottom: 40px;">
+    <h2 style="color: #27ae60; margin-bottom: 20px; font-size: 2rem;">👥 Manage Users</h2>
+    <p style="color: #34495e; font-size: 1.1rem;">
+        View and manage all DailyPod subscribers. Toggle user status and monitor subscription activity.
+    </p>
+</div>
+
+<div style="background: rgba(255,255,255,0.9); padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: #27ae60;">📱 User Subscriptions</h3>
+        <div style="color: #6c757d;">
+            Showing {{ users.items|length }} of {{ users.total }} users
+        </div>
+    </div>
+    
+    {% if users.items %}
+        <div style="overflow-x: auto;">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Phone Number</th>
+                        <th>Language</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Last Delivery</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users.items %}
+                        <tr>
+                            <td>{{ user.phone_number }}</td>
+                            <td>
+                                {% if user.language == 'en' %}🇺🇸 English
+                                {% elif user.language == 'es' %}🇪🇸 Spanish
+                                {% elif user.language == 'fr' %}🇫🇷 French
+                                {% elif user.language == 'de' %}🇩🇪 German
+                                {% elif user.language == 'pt' %}🇵🇹 Portuguese
+                                {% else %}{{ user.language }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ 'success' if user.is_active else 'danger' }}">
+                                    {{ 'Active' if user.is_active else 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                {% if user.last_delivery %}
+                                    {{ user.last_delivery.strftime('%Y-%m-%d %H:%M') }}
+                                {% else %}
+                                    <span style="color: #6c757d;">Never</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button onclick="toggleUser({{ user.id }})" class="btn btn-{{ 'secondary' if user.is_active else '' }}" style="padding: 6px 12px; font-size: 0.8rem;">
+                                    {{ 'Deactivate' if user.is_active else 'Activate' }}
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if users.pages > 1 %}
+            <div style="text-align: center; margin-top: 30px;">
+                <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                    {% if users.has_prev %}
+                        <a href="{{ url_for('admin_users', page=users.prev_num) }}" class="btn btn-secondary" style="padding: 8px 16px;">← Previous</a>
+                    {% endif %}
+                    
+                    <span style="color: #6c757d; font-weight: 600;">
+                        Page {{ users.page }} of {{ users.pages }}
+                    </span>
+                    
+                    {% if users.has_next %}
+                        <a href="{{ url_for('admin_users', page=users.next_num) }}" class="btn btn-secondary" style="padding: 8px 16px;">Next →</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        <div style="text-align: center; padding: 40px;">
+            <p style="color: #6c757d; font-size: 1.1rem;">No users found</p>
+        </div>
+    {% endif %}
+</div>
+
+<div style="margin-top: 30px; text-align: center;">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+        ← Back to Dashboard
+    </a>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleUser(userId) {
+    if (confirm('Are you sure you want to toggle this user\'s status?')) {
+        fetch(`/api/user/${userId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('Error: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %} 
