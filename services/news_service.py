@@ -11,16 +11,12 @@ class NewsService:
         
     def fetch_news(self, category='general', language='en', count=10):
         try:
-            yesterday = datetime.now() - timedelta(days=1)
-            from_date = yesterday.strftime('%Y-%m-%d')
-            
             url = f"{self.base_url}/top-headlines"
             params = {
                 'country': 'us',
                 'category': category,
                 'language': language,
                 'pageSize': count,
-                'from': from_date,
                 'apiKey': self.api_key
             }
             
@@ -32,13 +28,38 @@ class NewsService:
             if data['status'] == 'ok':
                 articles = []
                 for article_data in data['articles']:
-                    existing = NewsArticle.query.filter_by(
-                        title=article_data['title'],
-                        source=article_data['source']['name']
-                    ).first()
-                    
-                    if not existing:
-                        article = NewsArticle(
+                    try:
+                        existing = NewsArticle.query.filter_by(
+                            title=article_data['title'],
+                            source=article_data['source']['name']
+                        ).first()
+                        
+                        if not existing:
+                            article = NewsArticle(
+                                title=article_data['title'],
+                                content=article_data.get('description', '') or article_data.get('content', ''),
+                                source=article_data['source']['name'],
+                                url=article_data['url'],
+                                category=category,
+                                language=language
+                            )
+                            db.session.add(article)
+                            articles.append(article)
+                    except Exception as e:
+                        # If database operation fails, still return the article data
+                        print(f"Database error for article {article_data['title']}: {e}")
+                        # Create a simple article object without database
+                        class SimpleArticle:
+                            def __init__(self, title, content, source, url, category, language):
+                                self.title = title
+                                self.content = content
+                                self.source = source
+                                self.url = url
+                                self.category = category
+                                self.language = language
+                                self.summary = None
+                        
+                        article = SimpleArticle(
                             title=article_data['title'],
                             content=article_data.get('description', '') or article_data.get('content', ''),
                             source=article_data['source']['name'],
@@ -46,10 +67,12 @@ class NewsService:
                             category=category,
                             language=language
                         )
-                        db.session.add(article)
                         articles.append(article)
                 
-                db.session.commit()
+                try:
+                    db.session.commit()
+                except Exception as e:
+                    print(f"Database commit error: {e}")
                 
                 self._log_system('info', f"Fetched {len(articles)} new articles for category: {category}, language: {language}")
                 
@@ -84,14 +107,22 @@ class NewsService:
         return all_articles
     
     def get_recent_articles(self, language='en', category=None, limit=10):
-        query = NewsArticle.query.filter_by(language=language)
-        
-        if category:
-            query = query.filter_by(category=category)
-        
-        return query.order_by(NewsArticle.created_at.desc()).limit(limit).all()
+        try:
+            query = NewsArticle.query.filter_by(language=language)
+            
+            if category:
+                query = query.filter_by(category=category)
+            
+            return query.order_by(NewsArticle.created_at.desc()).limit(limit).all()
+        except Exception as e:
+            print(f"Database error getting recent articles: {e}")
+            return []
     
     def _log_system(self, level, message):
-        log = SystemLog(level=level, message=message)
-        db.session.add(log)
-        db.session.commit() 
+        try:
+            log = SystemLog(level=level, message=message)
+            db.session.add(log)
+            db.session.commit()
+        except Exception as e:
+            # If we can't log to database, just print the message
+            print(f"[{level.upper()}] {message}") 

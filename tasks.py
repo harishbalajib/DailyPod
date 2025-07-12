@@ -9,6 +9,11 @@ from services.tts_service import TTSService
 from services.whatsapp_service import WhatsAppService
 
 @shared_task
+def test_task(message):
+    """Simple test task for load testing"""
+    return f"Test task completed with message: {message}"
+
+@shared_task
 def fetch_news_task():
     try:
         news_service = NewsService()

@@ -1,0 +1,16 @@
+# DailyPod Environment Configuration Template
+# Copy this to .env and replace with your actual API keys
+
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin123
+OPENAI_API_KEY=your_openai_api_key_here
+WHATSAPP_TOKEN=your_whatsapp_token_here
+WHATSAPP_PHONE_ID=your_whatsapp_phone_id_here
+GOOGLE_CLOUD_CREDENTIALS=path/to/your/google_credentials.json
+NEWS_API_KEY=your_news_api_key_here
+DEBUG=True
+HOST=0.0.0.0
+PORT=8001
+REDIS_URL=redis://localhost:6379/0
+DATABASE_URL=sqlite:///./dailypod.db
+SECRET_KEY=your_secret_key_here_change_in_production 

@@ -4,7 +4,7 @@ from models import db, SystemLog
 
 class AIService:
     def __init__(self):
-        openai.api_key = Config.OPENAI_API_KEY
+        self.client = openai.OpenAI(api_key=Config.OPENAI_API_KEY)
         
     def summarize_article(self, title, content, language='en'):
         try:
@@ -29,7 +29,7 @@ class AIService:
             Summary:
             """
             
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a professional news summarizer. Create concise, engaging summaries suitable for audio delivery."},
@@ -45,9 +45,6 @@ class AIService:
             
             return summary
             
-        except openai.error.OpenAIError as e:
-            self._log_system('error', f"OpenAI API error: {str(e)}")
-            return None
         except Exception as e:
             self._log_system('error', f"Error summarizing article: {str(e)}")
             return None
@@ -86,7 +83,7 @@ class AIService:
             Daily Summary:
             """
             
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a professional news anchor creating a daily news podcast. Make the summary engaging and conversational."},
@@ -102,14 +99,15 @@ class AIService:
             
             return summary
             
-        except openai.error.OpenAIError as e:
-            self._log_system('error', f"OpenAI API error in daily summary: {str(e)}")
-            return None
         except Exception as e:
             self._log_system('error', f"Error creating daily summary: {str(e)}")
             return None
     
     def _log_system(self, level, message):
-        log = SystemLog(level=level, message=message)
-        db.session.add(log)
-        db.session.commit() 
+        try:
+            log = SystemLog(level=level, message=message)
+            db.session.add(log)
+            db.session.commit()
+        except Exception as e:
+            # If we can't log to database, just print the message
+            print(f"[{level.upper()}] {message}") 

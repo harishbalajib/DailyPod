@@ -13,6 +13,7 @@ from services.ai_service import AIService
 from services.tts_service import TTSService
 from services.whatsapp_service import WhatsAppService
 from tasks import fetch_news_task, daily_delivery_task, cleanup_audio_task, health_check_task
+from scheduler import NewsScheduler
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -26,6 +27,8 @@ news_service = NewsService()
 ai_service = AIService()
 tts_service = TTSService()
 whatsapp_service = WhatsAppService()
+
+scheduler = NewsScheduler()
 
 class AdminUser(UserMixin):
     def __init__(self):

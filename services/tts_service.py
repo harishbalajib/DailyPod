@@ -130,6 +130,10 @@ class TTSService:
             self._log_system('error', f"Error cleaning up audio files: {str(e)}")
     
     def _log_system(self, level, message):
-        log = SystemLog(level=level, message=message)
-        db.session.add(log)
-        db.session.commit() 
+        try:
+            log = SystemLog(level=level, message=message)
+            db.session.add(log)
+            db.session.commit()
+        except Exception as e:
+            # If we can't log to database, just print the message
+            print(f"[{level.upper()}] {message}") 
