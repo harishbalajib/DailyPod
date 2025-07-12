@@ -4,7 +4,7 @@
 
 DailyPod is an innovative news delivery system that automatically fetches US news, summarizes it using AI, converts it to audio, and delivers it to users via WhatsApp every morning at 7:30 AM. Perfect for busy professionals who want to stay informed while on the go.
 
-![DailyPod Homepage](assets/Images/HomePage.png)
+![DailyPod Homepage](assets/images/HomePage.png)
 
 ## Features
 
@@ -93,7 +93,7 @@ DailyPod is an innovative news delivery system that automatically fetches US new
 4. **WhatsApp Delivery**: Automated sending to all active subscribers
 5. **Monitoring**: Comprehensive logging and admin dashboard for system management
 
-![DailyPod Functionality](assets/Images/Functionality.png)
+![DailyPod Functionality](assets/images/Functionality.png)
 
 ## API Integration
 
